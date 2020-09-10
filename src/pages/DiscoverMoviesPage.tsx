@@ -86,6 +86,7 @@ export default function DiscoverMoviesPage() {
               const pageNumber = i + 1;
               return (
                 <NavLink
+                  className="Paging"
                   to={"/discover/" + routeParams.searchText + "/" + pageNumber}
                 >
                   {pageNumber}

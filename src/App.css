@@ -128,3 +128,12 @@ a:visited {
   float: left;
   height: 100%;
 }
+
+.Paging {
+  color: black;
+  background-color: lightgray;
+  margin-left: 2px;
+  padding: 10px;
+  border-radius: 10px;
+  margin-bottom: 20px;
+}
