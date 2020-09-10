@@ -6,7 +6,7 @@ import { NavLink, useHistory, useParams } from "react-router-dom";
 
 export default function DiscoverMoviesPage() {
   const history = useHistory();
-  const routeParams = useParams<{ searchText: string }>();
+  const routeParams = useParams<{ searchText: string; pageNum: string }>();
   const [searchText, setSearchText] = useState("");
   const [searchState, setSearchState] = useState<SearchState>({
     status: "idle",
@@ -31,7 +31,12 @@ export default function DiscoverMoviesPage() {
         setSearchState({ status: "loading" });
 
         const response = await axios.get(Constants.BASEURL + "search/movie", {
-          params: { api_key: Constants.APIKEY, query: routeParams.searchText },
+          params: {
+            api_key: Constants.APIKEY,
+            query: routeParams.searchText,
+            enable_adult: true,
+            page: routeParams.pageNum ? routeParams.pageNum : "1",
+          },
         });
 
         console.log("Success", response.data);
@@ -40,7 +45,7 @@ export default function DiscoverMoviesPage() {
       }
     }
     search();
-  }, [routeParams.searchText]);
+  }, [routeParams.searchText, routeParams.pageNum]);
 
   return (
     <div>
@@ -57,7 +62,7 @@ export default function DiscoverMoviesPage() {
       {searchState.status === "success" && (
         <div>
           <h2>Results:</h2>
-          {searchState.data.results.slice(0, 10).map((movie) => {
+          {searchState.data.results.map((movie) => {
             return (
               <div className="Movie" key={movie.id}>
                 <h4>
@@ -75,6 +80,19 @@ export default function DiscoverMoviesPage() {
               </div>
             );
           })}
+          <div>
+            Page:
+            {[...Array(searchState.data.total_pages)].map((x, i) => {
+              const pageNumber = i + 1;
+              return (
+                <NavLink
+                  to={"/discover/" + routeParams.searchText + "/" + pageNumber}
+                >
+                  {pageNumber}
+                </NavLink>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>

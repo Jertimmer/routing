@@ -14,7 +14,10 @@ function App() {
       <NavBar />
       <Switch>
         <Route path="/movie/:id" component={MoviePage} />
-        <Route path="/discover/:searchText?" component={DiscoverMoviesPage} />
+        <Route
+          path="/discover/:searchText?/:pageNum?"
+          component={DiscoverMoviesPage}
+        />
         <Route path="/about" component={AboutPage} />
         <Route path="/" component={HomePage} />
       </Switch>
