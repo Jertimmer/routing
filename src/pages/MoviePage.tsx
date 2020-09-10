@@ -68,7 +68,7 @@ export default function MoviePage() {
             <label>{movie?.release_date}</label>
             <h4>Director</h4>
             {credits?.crew.map((crewmember) => {
-              if (crewmember.job == "Director") {
+              if (crewmember.job === "Director") {
                 return <label>{crewmember.name}</label>;
               }
             })}

@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { ApiResult } from "../entities/ApiResult";
 import * as Constants from "../entities/Constants";
-import { NavLink } from "react-router-dom";
+import { NavLink, useHistory, useParams } from "react-router-dom";
 
 export default function DiscoverMoviesPage() {
+  const history = useHistory();
+  const routeParams = useParams<{ searchText: string }>();
   const [searchText, setSearchText] = useState("");
   const [searchState, setSearchState] = useState<SearchState>({
     status: "idle",
@@ -16,18 +18,29 @@ export default function DiscoverMoviesPage() {
     | { status: "success"; data: ApiResult } // todo: specify the data type too
     | { status: "error"; error: any };
 
-  const search = async () => {
-    console.log("TODO search for movies for: ", searchText);
-    setSearchState({ status: "loading" });
-
-    const response = await axios.get(Constants.BASEURL + "search/movie", {
-      params: { api_key: Constants.APIKEY, query: searchText },
-    });
-
-    console.log("Success", response.data);
-
-    setSearchState({ status: "success", data: response.data });
+  const navigateToSearch = () => {
+    const routeParam = encodeURIComponent(searchText);
+    history.push(`/discover/${routeParam}`);
   };
+
+  useEffect(() => {
+    async function search() {
+      if (routeParams.searchText) {
+        setSearchText(routeParams.searchText);
+        console.log("TODO search for movies for: ", routeParams.searchText);
+        setSearchState({ status: "loading" });
+
+        const response = await axios.get(Constants.BASEURL + "search/movie", {
+          params: { api_key: Constants.APIKEY, query: routeParams.searchText },
+        });
+
+        console.log("Success", response.data);
+
+        setSearchState({ status: "success", data: response.data });
+      }
+    }
+    search();
+  }, [routeParams.searchText]);
 
   return (
     <div>
@@ -38,7 +51,7 @@ export default function DiscoverMoviesPage() {
           value={searchText}
           onChange={(e) => setSearchText(e.target.value)}
         />
-        <button onClick={search}>Search</button>
+        <button onClick={navigateToSearch}>Search</button>
       </p>
       {searchState.status === "loading" && <p>Searching...</p>}
       {searchState.status === "success" && (
